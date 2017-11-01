@@ -10,8 +10,8 @@ OBJS   += $(CUSRCS:.cu=.o)
 
 CUDA_PATH  = /usr/local/cuda-8.0
 NVCC       = $(CUDA_PATH)/bin/nvcc
-NFLAGS     = -O3 -arch=sm_35 -I$(CUDA_PATH)/include -I$(CUDA_PATH)/samples/common/inc -Wno-deprecated-gpu-targets #-DPROFILING -lineinfo
-LDFLAGS    = -O3 -arch=sm_35 -L$(CUDA_PATH)/lib64 -lcudart -lcublas -Wno-deprecated-gpu-targets #-lineinfo
+NFLAGS     = -O3 -arch=sm_61 -I$(CUDA_PATH)/include -I$(CUDA_PATH)/samples/common/inc -Wno-deprecated-gpu-targets #-DPROFILING -lineinfo
+LDFLAGS    = -O3 -arch=sm_61 -L$(CUDA_PATH)/lib64 -lcudart -lcublas -Wno-deprecated-gpu-targets #-lineinfo
 
 build : $(EXENAME)
 

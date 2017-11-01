@@ -23,7 +23,7 @@
 
 #include "my_sgemm_kernels.cuh"  // my sgemm kernels
 #include "my_sgemm_cm_kernels.cuh"  // my sgemm kernels
-int target_kernel = 4;
+int target_kernel = 9;
 
 typedef struct _matrixSize
 {

@@ -5,7 +5,7 @@
 
 #define work_per_thread 8
 #define RTS 4
-#define tile_size 32
+#define tile_size 64
 
 __global__ 
 void sgemm_6_rm(
@@ -128,13 +128,13 @@ void sgemm_6_cm(
 #define WIDTH 4	
 #define TSM   128  // The tile-size in dimension M
 #define TSN   128  // The tile-size in dimension N
-#define TSK   16   // The tile-size in dimension K
-#define WPTM  8	   // The amount of work-per-thread in dimension M
-#define WPTN  8	   // The amount of work-per-thread in dimension N
-#define RTSM  16   // The reduced tile-size in dimension M (== TSM/WPTM == number of threads)
+#define TSK   32   // The tile-size in dimension K
+#define WPTM  16   // The amount of work-per-thread in dimension M
+#define WPTN  8    // The amount of work-per-thread in dimension N
+#define RTSM  8    // The reduced tile-size in dimension M (== TSM/WPTM == number of threads)
 #define RTSN  16   // The reduced tile-size in dimension N (== TSN/WPTN == number of threads)
-#define LPTA  8	// The amount of loads-per-thread for A (== (TSK*WPTM*WPTN)/(TSN) )
-#define LPTB  8	// The amount of loads-per-thread for B (== (TSK*WPTM*WPTN)/(TSM) )
+#define LPTA  32   // The amount of loads-per-thread for A (== (TSK*WPTM*WPTN)/(TSN) )
+#define LPTB  32   // The amount of loads-per-thread for B (== (TSK*WPTM*WPTN)/(TSM) )
 
 #define TRANSPOSEX 16
 #define TRANSPOSEY 16
