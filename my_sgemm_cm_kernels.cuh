@@ -5,7 +5,7 @@
 
 #define work_per_thread 8
 #define RTS 4
-#define tile_size 64
+#define tile_size 32
 
 __global__ 
 void sgemm_6_rm(
@@ -20,8 +20,8 @@ void sgemm_6_rm(
 	// Thread identifiers
 	const int col = threadIdx.x; // Local col ID (max: tile_size)
 	const int row = threadIdx.y; // Local row ID (max: tile_size/work_per_thread == RTS)
-	const int globalRow = tile_size * blockIdx.x + row; // Row ID of C (0..c_height)
-	const int globalCol = tile_size * blockIdx.y + col; // Col ID of C (0..c_width)
+	const int globalRow = tile_size * blockIdx.y + row; // Row ID of C (0..c_height)
+	const int globalCol = tile_size * blockIdx.x + col; // Col ID of C (0..c_width)
 
 	// Local memory to fit a tile of TS*TS elements of A and B
 	__shared__ float As[tile_size][tile_size];
@@ -36,13 +36,13 @@ void sgemm_6_rm(
 	const unsigned int numTiles = common_dim / tile_size;
 	for (unsigned int t = 0; t < numTiles; t++) 
 	{
-		float *read_A_topleft = A + tile_size * blockIdx.x * lda + t * tile_size;
-		float *read_B_topleft = B + tile_size * t * ldb + tile_size * blockIdx.y;
+		float *read_A_topleft = A + tile_size * blockIdx.y * lda + t * tile_size;
+		float *read_B_topleft = B + tile_size * t * ldb + tile_size * blockIdx.x;
 		#pragma unroll
 		for (unsigned int w = 0; w < work_per_thread; w++)
 		{
 			As[row + w * RTS][col] = read_A_topleft[(w * RTS + row) * lda + col];
-			Bs[row + w * RTS][col] = read_B_topleft[(w * RTS + row) * lda + col];
+			Bs[row + w * RTS][col] = read_B_topleft[(w * RTS + row) * ldb + col];
 		}
 
 		__syncthreads();
@@ -128,13 +128,13 @@ void sgemm_6_cm(
 #define WIDTH 4	
 #define TSM   128  // The tile-size in dimension M
 #define TSN   128  // The tile-size in dimension N
-#define TSK   32   // The tile-size in dimension K
-#define WPTM  16   // The amount of work-per-thread in dimension M
-#define WPTN  8    // The amount of work-per-thread in dimension N
-#define RTSM  8    // The reduced tile-size in dimension M (== TSM/WPTM == number of threads)
+#define TSK   16   // The tile-size in dimension K
+#define WPTM  8	   // The amount of work-per-thread in dimension M
+#define WPTN  8	   // The amount of work-per-thread in dimension N
+#define RTSM  16   // The reduced tile-size in dimension M (== TSM/WPTM == number of threads)
 #define RTSN  16   // The reduced tile-size in dimension N (== TSN/WPTN == number of threads)
-#define LPTA  32   // The amount of loads-per-thread for A (== (TSK*WPTM*WPTN)/(TSN) )
-#define LPTB  32   // The amount of loads-per-thread for B (== (TSK*WPTM*WPTN)/(TSM) )
+#define LPTA  8	// The amount of loads-per-thread for A (== (TSK*WPTM*WPTN)/(TSN) )
+#define LPTB  8	// The amount of loads-per-thread for B (== (TSK*WPTM*WPTN)/(TSM) )
 
 #define TRANSPOSEX 16
 #define TRANSPOSEY 16
