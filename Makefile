@@ -1,7 +1,7 @@
-EXENAME = sgemm_cuda 
+EXENAME = my_sgemm_cuda
 
 CC      = g++
-CFLAGS  = -O2 -fopenmp
+CFLAGS  = -O3 -fopenmp
 
 CCSRCS  = $(wildcard *.cc)
 CUSRCS  = $(wildcard *.cu)
@@ -10,8 +10,8 @@ OBJS   += $(CUSRCS:.cu=.o)
 
 CUDA_PATH  = /usr/local/cuda-8.0
 NVCC       = $(CUDA_PATH)/bin/nvcc
-NFLAGS     = -O3 -arch=sm_61 -I$(CUDA_PATH)/include -I$(CUDA_PATH)/samples/common/inc -Wno-deprecated-gpu-targets #-DPROFILING -lineinfo
-LDFLAGS    = -O3 -arch=sm_61 -L$(CUDA_PATH)/lib64 -lcudart -lcublas -Wno-deprecated-gpu-targets #-lineinfo
+NVFLAGS    = -O3 -std=c++11 -arch=sm_61 -Xcompiler -fopenmp -I$(CUDA_PATH)/include -I$(CUDA_PATH)/samples/common/inc -Wno-deprecated-gpu-targets
+LDFLAGS    = -L$(CUDA_PATH)/lib64 -lcudart -lcublas -Wno-deprecated-gpu-targets 
 
 build : $(EXENAME)
 
@@ -24,8 +24,8 @@ all : run
 $(EXENAME): $(OBJS) 
 	$(NVCC) $(NVFLAGS) $(LDFLAGS) -o $(EXENAME) $(OBJS)
 
-%.o : %.cu 
-	$(NVCC) $(NFLAGS) -c $^ 
+%.o : %.cu  
+	$(NVCC) $(NVFLAGS) -c $^ 
 
 %.o: %.cc 
 	$(CC) $(CFLAGS) -c $^
